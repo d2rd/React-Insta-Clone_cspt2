@@ -59,18 +59,16 @@ const PostContainer = props => {
       </div>
       <div className="Timestamp">{props.timestamp}</div>
       <div>
-        <form className="AddComment">
+        <form className="AddComment" onSubmit={(x) => props.addComment(x, props.id)}>
           <input
             className="commentInput"
-            // name="newCommentList"
-            name="addComment"
+            name="comment"
+            value={props.comment.text}
             type="text"
-            // value= {name}
             placeholder="Add a comment..."
-            // onChange={alert('hello world')} // submit test works
-            onChange={props.newCommentList} //calls handleInputChange
+            onChange={props.handler}
           />
-          <input type="submit"  />
+          <input type="submit" />
         </form>
         {/* ☞ 8856f45d-bf37-455b-8549-b7a5ef4cecf2 */}
       </div>

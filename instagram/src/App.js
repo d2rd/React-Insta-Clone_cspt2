@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 // import logo from './D2rdroid1.png';
-import logo from "./d2rdDroidEmoji.png";
+// import logo from "./d2rdDroidEmoji.png";
 import "./App.css";
 
 
@@ -14,6 +14,10 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
+      comment: {
+        postId: null,
+        text: ''
+      },
       instaClonePosts: [],
       newListComment: ''
     };
@@ -48,42 +52,44 @@ class App extends Component {
   */
  
  
- componentDidMount() {
-   this.setState({ instaClonePosts: data });
-   
- }
- 
+  componentDidMount() {
+    this.setState({ instaClonePosts: data });
+  }
 
-likePost = () => {
-this.setState({ likes: this.state.likes + 1 });
-};
+
+  likePost = () => {
+    this.setState({ likes: this.state.likes + 1 });
+  };
 
 // handleInputChange = (event)=> {
 // {alert('hello world')}}// this test works.  Alert pops up on change to input
 
-handleInputChange = (event)=> {this.setState({[event.target.name]:event.target.value})
-{alert('hello world')}} // creates state addComment and set the value to value in inpt form.  Sends this to new array
-
-AddComment = (event) => {
+handleInputChange = (event) => {
+  const { name, value } = event.target
   event.preventDefault();
-  const commentsList = this.state.instaClonePosts;
-  commentsList.push(this.state.newListComment);
+  this.setState({ [name]: { ...this.state[name], text: value } })
+} // creates state addComment and set the value to value in inpt form.  Sends this to new array
+
+addComment = (event, id) => {
+  event.preventDefault();
+  const instaClonePosts = [ ...this.state.instaClonePosts ];
+  const comments = [ ...instaClonePosts[id].comments ];
+  comments.push(this.state.comment);
   this.setState({
-    newListComment: '',
-    comments: commentsList
+    comment: {
+      id: null,
+      text: ''
+    },
+    instaClonePosts: [
+      ...instaClonePosts.slice(0, id),
+      {
+        ...instaClonePosts[id],
+        comments
+      },
+      ...instaClonePosts.slice(id + 1)
+    ]
   });
 };
-
-// // Add Comments
-// addComment = () => {
-//   const username = "Jonathan";
-//   const text = this.state.newCommentText;
-//   this.setState({
-//   comments: [...this.state.comments, { username, text }],
-//   newCommentText: ""
-//   });
-// };
-
 
  render() {
     return (
@@ -95,9 +101,13 @@ AddComment = (event) => {
           {this.state.instaClonePosts.map((post, i) => {
             return (
               <PostContainer
-              handler={this.handleInputChange}  
-              {...post} // spread operator `...` passes all elements in the `post` to `PostContainer`
-// ***** Suspect that {...post} overwrites new comment with old post state
+                handler={this.handleInputChange}
+                addComment={this.addComment}
+                comment={this.state.comment}
+                id={i}
+                {...post}
+              // spread operator `...` passes all elements in the `post` to `PostContainer`
+              // ***** Suspect that {...post} overwrites new comment with old post state
               />
             );
           })}
